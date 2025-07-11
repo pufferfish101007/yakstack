@@ -6,8 +6,8 @@ reloadable = true
 [libraries]
 linux.debug.x86_64 =     "res://../rust/target/debug/libyakstack.so"
 linux.release.x86_64 =   "res://../rust/target/release/libyakstack.so"
-windows.debug.x86_64 =   "res://../rust/target/x86_64-pc-windows-msvc/debug/yakstack.dll"
-windows.release.x86_64 = "res://../rust/target/x86_64-pc-windows-msvc/release/yakstack.dll"
+windows.debug.x86_64 =   "res://../rust/target/debug/yakstack.dll"
+windows.release.x86_64 = "res://../rust/target/release/yakstack.dll"
 macos.debug =            "res://../rust/target/debug/libyakstack.dylib"
 macos.release =          "res://../rust/target/release/libyakstack.dylib"
 macos.debug.arm64 =      "res://../rust/target/debug/libyakstack.dylib"
