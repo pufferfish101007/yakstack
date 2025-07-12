@@ -1,32 +1,18 @@
-use godot::classes::{CharacterBody2D, ICharacterBody2D, Input, InputEvent};
-use godot::global::move_toward;
+use crate::level::Level;
+use godot::classes::{
+    CharacterBody2D, CollisionShape2D, ICharacterBody2D, Input, RectangleShape2D, Shape2D,
+    Sprite2D, Texture2D,
+};
 use godot::prelude::*;
 
 #[derive(GodotClass)]
-#[class(base=CharacterBody2D)]
-struct Yak {
-    speed: f64,
-    angular_speed: f64,
-
+#[class(init, base=CharacterBody2D)]
+pub struct Yak {
     base: Base<CharacterBody2D>,
 }
 
 #[godot_api]
 impl ICharacterBody2D for Yak {
-    fn init(base: Base<CharacterBody2D>) -> Self {
-        godot_print!("Hello, world!"); // Prints to the Godot console
-
-        Self {
-            speed: 400.0,
-            angular_speed: std::f64::consts::PI / 1.5,
-            base,
-        }
-    }
-
-    fn ready(&mut self) {
-        self.base_mut().set_process_unhandled_key_input(true);
-    }
-
     fn physics_process(&mut self, delta: f64) {
         let is_on_floor = self.base().is_on_floor();
 
@@ -40,13 +26,7 @@ impl ICharacterBody2D for Yak {
             vel.y = Self::JUMP_VELOCITY;
         }
 
-        let direction = Input::singleton().get_axis("ui_left", "ui_right");
-
-        if direction != 0.0 {
-            vel.x = Self::SPEED * direction;
-        } else {
-            vel.x = move_toward(vel.x as f64, 0.0, Self::SPEED as f64 / 20.0) as f32;
-        }
+        vel.x = Level::SPEED as f32;
 
         self.base_mut().set_velocity(vel);
 
@@ -55,9 +35,25 @@ impl ICharacterBody2D for Yak {
 }
 
 #[godot_api]
-impl Yak {}
+impl Yak {
+    #[func]
+    pub fn setup(&mut self) {
+        self.base_mut().set_position(Vector2 { x: 400.0, y: 120.0 });
+
+        let mut sprite2d = Sprite2D::new_alloc();
+        sprite2d.set_texture(&load::<Texture2D>("res://yak1.svg"));
+        sprite2d.set_scale(Vector2 { x: 0.422, y: 0.422 });
+        self.base_mut().add_child(&sprite2d);
+
+        let mut collision_shape = CollisionShape2D::new_alloc();
+        let mut shape = RectangleShape2D::new_gd();
+        shape.set_size(Vector2::new(41.0, 44.0));
+        collision_shape.set_shape(&shape);
+        collision_shape.set_position(Vector2 { x: -1.0, y: 12.0 });
+        self.base_mut().add_child(&collision_shape);
+    }
+}
 
 impl Yak {
     const JUMP_VELOCITY: f32 = -600.0;
-    const SPEED: f32 = 300.0;
 }
