@@ -9,6 +9,7 @@ use godot::prelude::*;
 #[class(init, base=CharacterBody2D)]
 pub struct Yak {
     base: Base<CharacterBody2D>,
+    has_landed: bool,
 }
 
 #[godot_api]
@@ -17,7 +18,7 @@ impl ICharacterBody2D for Yak {
         let is_on_floor = self.base().is_on_floor();
 
         let mut vel = self.base().get_velocity();
-        if !self.base().is_on_floor() {
+        if !is_on_floor {
             let grav = self.base().get_gravity();
             vel += grav * (delta as f32);
         }
@@ -26,7 +27,13 @@ impl ICharacterBody2D for Yak {
             vel.y = Self::JUMP_VELOCITY;
         }
 
-        vel.x = Level::SPEED as f32;
+        if !self.has_landed && is_on_floor {
+            self.has_landed = true;
+        }
+
+        if self.has_landed {
+            vel.x = Level::SPEED as f32;
+        }
 
         self.base_mut().set_velocity(vel);
 
@@ -37,8 +44,8 @@ impl ICharacterBody2D for Yak {
 #[godot_api]
 impl Yak {
     #[func]
-    pub fn setup(&mut self) {
-        self.base_mut().set_position(Vector2 { x: 400.0, y: 120.0 });
+    pub fn setup(&mut self, position: Vector2) {
+        self.base_mut().set_position(position);
 
         let mut sprite2d = Sprite2D::new_alloc();
         sprite2d.set_texture(&load::<Texture2D>("res://yak1.svg"));

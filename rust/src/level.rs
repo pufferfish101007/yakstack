@@ -1,6 +1,6 @@
 use crate::terrain::Terrain;
 use crate::yak::Yak;
-use godot::classes::{Camera2D, INode2D, Node2D};
+use godot::classes::{Camera2D, INode2D, Input, Node2D};
 use godot::prelude::*;
 
 #[derive(GodotClass)]
@@ -25,20 +25,36 @@ impl INode2D for Level {
             .expect("`Level` must have Camera2D as child");
         camera.set_position(Vector2 { x: 578.0, y: 323.0 });
 
-        let mut yak = Yak::new_alloc();
-        self.yaks.push(&yak.get_name());
-        yak.bind_mut().setup();
-        self.base_mut().add_child(&yak);
+        self.spawn_yak();
     }
 
     fn physics_process(&mut self, delta: f64) {
-        let mut camera = self
-            .base()
-            .try_get_node_as::<Camera2D>("Camera2D")
-            .expect("`Level` must have Camera2D as child");
+        let mut camera = self.get_camera();
         let mut pos = camera.get_position();
         pos.x += (Self::SPEED * delta) as f32;
         camera.set_position(pos);
+
+        if Input::singleton().is_action_just_pressed("ui_accept") {
+            self.spawn_yak();
+        }
+    }
+}
+
+#[godot_api]
+impl Level {
+    fn spawn_yak(&mut self) {
+        let mut yak = Yak::new_alloc();
+        self.yaks.push(&yak.get_name());
+        let camera_pos = self.get_camera().get_position();
+        yak.bind_mut()
+            .setup(Vector2 { x: camera_pos.x - 100.0, y: 120.0 });
+        self.base_mut().add_child(&yak);
+    }
+
+    fn get_camera(&self) -> Gd<Camera2D> {
+        self.base()
+            .try_get_node_as::<Camera2D>("Camera2D")
+            .expect("`Level` must have Camera2D as child")
     }
 }
 
