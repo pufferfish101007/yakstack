@@ -1,6 +1,7 @@
 use crate::terrain::Terrain;
-use crate::yak::Yak;
-use godot::classes::{Camera2D, INode2D, Input, Node2D};
+use crate::yak_chbody::Yak;
+use crate::camera::Camera;
+use godot::classes::{INode2D, Input, Node2D};
 use godot::prelude::*;
 
 #[derive(GodotClass)]
@@ -21,8 +22,8 @@ impl INode2D for Level {
 
         let mut camera = self
             .base()
-            .try_get_node_as::<Camera2D>("Camera2D")
-            .expect("`Level` must have Camera2D as child");
+            .try_get_node_as::<Camera>("Camera")
+            .expect("`Level` must have Camera as child");
         camera.set_position(Vector2 { x: 578.0, y: 323.0 });
 
         self.spawn_yak();
@@ -48,13 +49,19 @@ impl Level {
         let camera_pos = self.get_camera().get_position();
         yak.bind_mut()
             .setup(Vector2 { x: camera_pos.x - 100.0, y: 120.0 });
+        yak.signals().screen_exited().connect_other(self, |this| {
+            let mut camera = this.get_camera();
+            let zoom = camera.bind().get_target_zoom();
+            camera.bind_mut().set_target_zoom(zoom * 0.92);
+        });
+        // yak.set_linear_velocity(Vector2 { x: 300.0, y: 0.0 });
         self.base_mut().add_child(&yak);
     }
 
-    fn get_camera(&self) -> Gd<Camera2D> {
+    fn get_camera(&self) -> Gd<Camera> {
         self.base()
-            .try_get_node_as::<Camera2D>("Camera2D")
-            .expect("`Level` must have Camera2D as child")
+            .try_get_node_as::<Camera>("Camera")
+            .expect("`Level` must have Camera as child")
     }
 }
 

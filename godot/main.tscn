@@ -10,6 +10,6 @@
 tileset = ExtResource("1_0xm2m")
 auto_generate = true
 
-[node name="Camera2D" type="Camera2D" parent="EndlessLevel"]
+[node name="Camera" type="Camera" parent="EndlessLevel"]
 position = Vector2(578, 323)
 position_smoothing_enabled = true

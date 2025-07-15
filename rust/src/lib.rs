@@ -1,8 +1,9 @@
 use godot::prelude::*;
 
-pub mod yak;
+pub mod yak_chbody;
 pub mod terrain;
 pub mod level;
+pub mod camera;
 
 pub use terrain::chunk;
 
