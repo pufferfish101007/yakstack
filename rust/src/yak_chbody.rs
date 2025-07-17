@@ -22,9 +22,9 @@ impl ICharacterBody2D for Yak {
         let grav = self.base().get_gravity();
 
         let mut vel = self.base().get_velocity();
-        // if !is_on_floor {
+        if !is_on_floor {
             vel += grav * (delta as f32);
-        // }
+        }
 
         if Input::singleton().is_action_just_pressed("ui_up") && is_on_floor {
             vel.y = Self::JUMP_VELOCITY;
@@ -76,7 +76,7 @@ impl Yak {
     #[func]
     pub fn setup(&mut self, position: Vector2, id: u32) {
         self.base_mut().set_position(position);
-        self.base_mut().set_floor_stop_on_slope_enabled(false);
+        // self.base_mut().set_floor_stop_on_slope_enabled(false);
 
         self.id = id;
 

@@ -5,7 +5,7 @@ pub mod terrain;
 pub mod level;
 pub mod camera;
 
-pub use terrain::chunk;
+pub use terrain::chunk_staticbody;
 
 struct YackStack;
 

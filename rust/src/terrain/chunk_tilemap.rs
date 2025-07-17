@@ -27,7 +27,10 @@ impl Chunk {
     pub fn setup(&mut self, tileset: Gd<TileSet>) {
         self.base_mut().set_tile_set(&tileset);
         self.base_mut().set_collision_enabled(true);
-        self.base_mut().set_scale(Vector2 { x: 2.0, y: 2.0 });
+        // self.base_mut().set_scale(Vector2 { x: 2.0, y: 2.0 });
+        let length = self.get_length();
+        self.base_mut()
+            .set_rendering_quadrant_size(length);
 
         let mut visibility_notifier = VisibleOnScreenNotifier2D::new_alloc();
         visibility_notifier.set_rect(Rect2 {

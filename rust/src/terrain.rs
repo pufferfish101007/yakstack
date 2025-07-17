@@ -1,9 +1,9 @@
 use godot::classes::{INode2D, Node2D, TileSet};
 use godot::prelude::*;
 
-pub mod chunk;
+pub mod chunk_staticbody;
 
-use chunk::Chunk;
+use chunk_staticbody::Chunk;
 
 #[derive(GodotClass)]
 #[class(init, base=Node2D)]
@@ -31,12 +31,7 @@ impl Terrain {
 
                 new_chunk.bind_mut().set_length(Self::AUTO_CHUNK_LEN);
 
-                new_chunk.bind_mut().setup(
-                    self.tileset
-                        .as_ref()
-                        .expect("`Terrain` must have a TileSet specified")
-                        .clone(),
-                );
+                new_chunk.bind_mut().setup();
 
                 new_chunk.bind_mut().generate_terrain();
 
