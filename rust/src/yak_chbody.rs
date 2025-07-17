@@ -10,6 +10,7 @@ use godot::prelude::*;
 #[class(init, base=CharacterBody2D)]
 pub struct Yak {
     base: Base<CharacterBody2D>,
+    id: u32,
     has_landed: bool,
 }
 
@@ -21,9 +22,9 @@ impl ICharacterBody2D for Yak {
         let grav = self.base().get_gravity();
 
         let mut vel = self.base().get_velocity();
-        if !is_on_floor {
+        // if !is_on_floor {
             vel += grav * (delta as f32);
-        }
+        // }
 
         if Input::singleton().is_action_just_pressed("ui_up") && is_on_floor {
             vel.y = Self::JUMP_VELOCITY;
@@ -38,13 +39,18 @@ impl ICharacterBody2D for Yak {
             .filter_map(|collision| collision.get_collider())
             .any(|collider| {
                 let class = collider.get_class();
-                godot_print!("{class}");
+                godot_print!("[{}] {class}", self.id);
                 class == "Chunk".into()
             });
-        godot_print!("{touching_floor}");
-        if touching_floor {
+        godot_print!("[{}] {touching_floor}", self.id);
+        // if touching_floor {
+        //     vel.x = Level::SPEED as f32;
+        //     godot_print!("[{}] set horizontal speed", self.id)
+        // }
+        if is_on_floor && !touching_floor {
+            vel.x = 0.0;
+        } else {
             vel.x = Level::SPEED as f32;
-            godot_print!("set horizontal speed")
         }
 
         self.base_mut().set_velocity(vel);
@@ -58,7 +64,7 @@ impl ICharacterBody2D for Yak {
         // {
         //     self.base_mut().set_velocity(Vector2 { x: Level::SPEED as f32, y: grav.length() });
         // }}
-        godot_print!("{is_on_floor}");
+        // godot_print!("[{}] {is_on_floor}", self.id);
         // if is_on_floor {
         //     self.base_mut().set_velocity(Vector2 { x: Level::SPEED as f32, y: grav.length() })
         // }
@@ -68,8 +74,11 @@ impl ICharacterBody2D for Yak {
 #[godot_api]
 impl Yak {
     #[func]
-    pub fn setup(&mut self, position: Vector2) {
+    pub fn setup(&mut self, position: Vector2, id: u32) {
         self.base_mut().set_position(position);
+        self.base_mut().set_floor_stop_on_slope_enabled(false);
+
+        self.id = id;
 
         let mut sprite2d = Sprite2D::new_alloc();
         sprite2d.set_texture(&load::<Texture2D>("res://yak1.svg"));

@@ -8,6 +8,7 @@ use godot::prelude::*;
 #[class(init, base=Node2D)]
 pub struct Level {
     base: Base<Node2D>,
+    yak_count: u32,
     yaks: Array<StringName>,
 }
 
@@ -47,8 +48,10 @@ impl Level {
         let mut yak = Yak::new_alloc();
         self.yaks.push(&yak.get_name());
         let camera_pos = self.get_camera().get_position();
+        godot_print!("spawning yak with id {}", self.yak_count);
         yak.bind_mut()
-            .setup(Vector2 { x: camera_pos.x - 100.0, y: 120.0 });
+            .setup(Vector2 { x: camera_pos.x - 100.0, y: 120.0 }, self.yak_count);
+        self.yak_count += 1;
         yak.signals().screen_exited().connect_other(self, |this| {
             let mut camera = this.get_camera();
             let zoom = camera.bind().get_target_zoom();
