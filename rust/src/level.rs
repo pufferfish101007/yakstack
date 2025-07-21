@@ -1,6 +1,6 @@
-use crate::terrain::Terrain;
-use crate::yak_chbody::Yak;
 use crate::camera::Camera;
+use crate::terrain::Terrain;
+use crate::yak::Yak;
 use godot::classes::{INode2D, Input, Node2D};
 use godot::prelude::*;
 
@@ -30,12 +30,7 @@ impl INode2D for Level {
         self.spawn_yak();
     }
 
-    fn physics_process(&mut self, delta: f64) {
-        let mut camera = self.get_camera();
-        let mut pos = camera.get_position();
-        pos.x += (Self::SPEED * delta) as f32;
-        camera.set_position(pos);
-
+    fn physics_process(&mut self, _delta: f64) {
         if Input::singleton().is_action_just_pressed("ui_accept") {
             self.spawn_yak();
         }
@@ -49,14 +44,25 @@ impl Level {
         self.yaks.push(&yak.get_name());
         let camera_pos = self.get_camera().get_position();
         godot_print!("spawning yak with id {}", self.yak_count);
-        yak.bind_mut()
-            .setup(Vector2 { x: camera_pos.x - 100.0, y: 120.0 }, self.yak_count);
+        yak.bind_mut().setup(
+            Vector2 {
+                x: camera_pos.x - 100.0,
+                y: 120.0,
+            },
+            self.yak_count,
+        );
         self.yak_count += 1;
-        yak.signals().screen_exited().connect_other(self, |this| {
-            let mut camera = this.get_camera();
-            let zoom = camera.bind().get_target_zoom();
-            camera.bind_mut().set_target_zoom(zoom * 0.92);
-        });
+        yak.signals()
+            .screen_exited()
+            .connect_other(self, |this, name| {
+                // let mut camera = this.get_camera();
+                // let zoom = camera.bind().get_target_zoom();
+                // camera.bind_mut().set_target_zoom(zoom * 0.92);
+                this.yaks.erase(&name);
+                let mut yak = this.base().get_node_as::<Yak>(name.arg());
+                this.base_mut().remove_child(&yak);
+                yak.queue_free();
+            });
         // yak.set_linear_velocity(Vector2 { x: 300.0, y: 0.0 });
         self.base_mut().add_child(&yak);
     }

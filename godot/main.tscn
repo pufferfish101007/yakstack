@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bcox5obg5s8yg"]
+[gd_scene load_steps=3 format=3 uid="uid://bcox5obg5s8yg"]
 
 [ext_resource type="TileSet" uid="uid://pc6ofsyy0peq" path="res://tileset.tres" id="1_0xm2m"]
+[ext_resource type="Script" uid="uid://b32h11yrl4g7s" path="res://camera.gd" id="2_0xm2m"]
 
 [node name="Node" type="Node"]
 
@@ -13,3 +14,4 @@ auto_generate = true
 [node name="Camera" type="Camera" parent="EndlessLevel"]
 position = Vector2(578, 323)
 position_smoothing_enabled = true
+script = ExtResource("2_0xm2m")
