@@ -1,21 +1,21 @@
 use godot::classes::{
-    AnimatableBody2D, CollisionShape2D, IAnimatableBody2D, PhysicsMaterial, RectangleShape2D,
+    StaticBody2D, CollisionShape2D, IStaticBody2D, PhysicsMaterial, RectangleShape2D,
     Sprite2D, Texture2D, VisibleOnScreenNotifier2D,
 };
 use godot::global::randf;
 use godot::prelude::*;
 
 #[derive(GodotClass)]
-#[class(init, base=AnimatableBody2D)]
+#[class(init, base=StaticBody2D)]
 pub struct Chunk {
-    base: Base<AnimatableBody2D>,
+    base: Base<StaticBody2D>,
     #[export]
     length: i32,
     pub desired_position: Option<Vector2>,
 }
 
 #[godot_api]
-impl IAnimatableBody2D for Chunk {
+impl IStaticBody2D for Chunk {
     fn ready(&mut self) {
         if self.get_length() < 1 {
             godot_error!("chunk must have length >= 1")
