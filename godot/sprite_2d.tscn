@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dtm0mtf3k4mo6"]
-
-[ext_resource type="Texture2D" uid="uid://bprh5b5rxjlwo" path="res://yak1.svg" id="1_f7cmv"]
-
-[node name="Yak" type="Yak"]
-position = Vector2(594, 121)
-texture = ExtResource("1_f7cmv")

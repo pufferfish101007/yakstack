@@ -7,4 +7,10 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
-godot = "0.3.1"
+godot = "0.3.4"
+
+[profile.dev.package.godot]
+hint-mostly-unused = true
+
+[profile.release.package.godot]
+hint-mostly-unused = true

@@ -1,4 +1,4 @@
-use godot::classes::{INode2D, Node2D, TileSet};
+use godot::classes::{INode2D, Node2D};
 use godot::prelude::*;
 
 pub mod chunk;
@@ -11,8 +11,6 @@ use crate::level::Level;
 #[class(init, base=Node2D)]
 pub struct Terrain {
     base: Base<Node2D>,
-    #[export]
-    tileset: Option<Gd<TileSet>>,
     #[export]
     chunk_names: Array<StringName>,
     chunks: Vec<Gd<Chunk>>,
@@ -61,7 +59,8 @@ impl Terrain {
                 new_chunk.bind_mut().generate_terrain();
 
                 let mut pos = new_chunk.get_position();
-                pos.x += Self::AUTO_CHUNK_LEN as f32 * 32.0 * (i as f32);
+                pos.x += (Self::AUTO_CHUNK_LEN as f32 * Chunk::TILE_SIZE)
+                    * (i as f32);
                 new_chunk.set_position(pos);
 
                 self.base_mut().add_child(&new_chunk);
@@ -85,7 +84,8 @@ impl Terrain {
             chunk.signals().screen_exited().connect_self(|this| {
                 godot_print!("chunk said screen exited");
                 let mut pos = this.base().get_position();
-                pos.x += Self::AUTO_CHUNK_LEN as f32 * 32.0 * Self::AUTO_GEN_CHUNKS as f32;
+                pos.x +=
+                    Self::AUTO_CHUNK_LEN as f32 * Chunk::TILE_SIZE * Self::AUTO_GEN_CHUNKS as f32;
                 this.desired_position = Some(pos);
                 this.generate_terrain();
             });
@@ -99,5 +99,5 @@ impl Terrain {
 
 impl Terrain {
     const AUTO_GEN_CHUNKS: i32 = 3;
-    const AUTO_CHUNK_LEN: i32 = 64;
+    const AUTO_CHUNK_LEN: i32 = 32;
 }
