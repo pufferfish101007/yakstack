@@ -35,7 +35,6 @@ impl INode2D for Terrain {
                     y: 0.0,
                 },
             );
-            godot_print!("{}", chunk.get_position());
         }
     }
 }
@@ -80,9 +79,7 @@ impl Terrain {
         }
 
         for chunk in &mut self.chunks {
-            godot_print!("doing things to chunk");
             chunk.signals().screen_exited().connect_self(|this| {
-                godot_print!("chunk said screen exited");
                 let mut pos = this.base().get_position();
                 pos.x +=
                     Self::AUTO_CHUNK_LEN as f32 * Chunk::TILE_SIZE * Self::AUTO_GEN_CHUNKS as f32;
@@ -99,5 +96,5 @@ impl Terrain {
 
 impl Terrain {
     const AUTO_GEN_CHUNKS: i32 = 3;
-    const AUTO_CHUNK_LEN: i32 = 32;
+    const AUTO_CHUNK_LEN: i32 = 16;
 }

@@ -1,6 +1,7 @@
 use crate::camera::Camera;
 use crate::terrain::Terrain;
 use crate::yak::Yak;
+use crate::yak_config::YakConfig;
 use godot::classes::{INode2D, Input, Node2D};
 use godot::prelude::*;
 
@@ -9,7 +10,8 @@ use godot::prelude::*;
 pub struct Level {
     base: Base<Node2D>,
     yak_count: u32,
-    yaks: Array<StringName>,
+    pub yaks: Vec<Gd<Yak>>,
+    pub yak_config: YakConfig,
 }
 
 #[godot_api]
@@ -27,6 +29,14 @@ impl INode2D for Level {
             .expect("`Level` must have Camera as child");
         camera.set_position(Vector2 { x: 578.0, y: 323.0 });
 
+        let config_buttons = {
+            use YakConfig as YC;
+            [YC::Stack, YC::Conga]
+        };
+        for (i, config) in config_buttons.into_iter().enumerate() {
+            self.make_button(config, i);
+        }
+
         self.spawn_yak();
     }
 
@@ -41,9 +51,8 @@ impl INode2D for Level {
 impl Level {
     fn spawn_yak(&mut self) {
         let mut yak = Yak::new_alloc();
-        self.yaks.push(&yak.get_name());
+        self.yaks.push(Gd::clone(&yak));
         let camera_pos = self.get_camera().get_position();
-        godot_print!("spawning yak with id {}", self.yak_count);
         yak.bind_mut().setup(
             Vector2 {
                 x: camera_pos.x - 100.0,
@@ -54,12 +63,11 @@ impl Level {
         self.yak_count += 1;
         yak.signals()
             .screen_exited()
-            .connect_other(self, |this, name| {
+            .connect_other(self, |this, mut yak| {
                 // let mut camera = this.get_camera();
                 // let zoom = camera.bind().get_target_zoom();
                 // camera.bind_mut().set_target_zoom(zoom * 0.92);
-                this.yaks.erase(&name);
-                let mut yak = this.base().get_node_as::<Yak>(name.arg());
+                this.yaks.retain(|el| el != &yak);
                 this.base_mut().remove_child(&yak);
                 yak.queue_free();
             });

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cvpdm8e7nbqbt"
-path="res://.godot/imported/godotwaka.png-ef0518417b4f997d237759e5551dd05d.ctex"
+uid="uid://cjieosl5o0tpy"
+path="res://.godot/imported/crouch1.png-237dc22872c70387febc4da74a7f9e90.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/godotwaka.png"
-dest_files=["res://.godot/imported/godotwaka.png-ef0518417b4f997d237759e5551dd05d.ctex"]
+source_file="res://assets/yak/crouch1.png"
+dest_files=["res://.godot/imported/crouch1.png-237dc22872c70387febc4da74a7f9e90.ctex"]
 
 [params]
 
