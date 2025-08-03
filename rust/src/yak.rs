@@ -15,18 +15,19 @@ pub enum YakCostume {
 }
 
 impl YakCostume {
-    fn asset_name(&self) -> &str {
+    fn asset_name(self) -> &'static str {
         match self {
             Self::Walk => "walk1",
             Self::Crouch => "crouch1",
         }
     }
 
-    pub fn asset_path(&self) -> String {
+    #[must_use]
+    pub fn asset_path(self) -> String {
         format!("res://assets/yak/{}", self.asset_name())
     }
 
-    fn shape(&self) -> Gd<Shape2D> {
+    fn shape(self) -> Gd<Shape2D> {
         match self {
             Self::Walk => {
                 let mut shape = RectangleShape2D::new_gd();
@@ -46,7 +47,7 @@ impl YakCostume {
         }
     }
 
-    fn shape_offset(&self) -> Vector2 {
+    fn shape_offset(self) -> Vector2 {
         match self {
             Self::Walk => Vector2 { x: -12.0, y: 32.0 },
             Self::Crouch => Vector2 { x: -90.0, y: -81.0 },
@@ -148,6 +149,7 @@ impl Yak {
     ///
     /// But this particular function determines if this yak is actively supporting other
     /// yaks (physically).
+    #[must_use]
     pub fn is_supportive(&self) -> bool {
         let my_position = self.base().get_position();
         self.base()
@@ -162,10 +164,11 @@ impl Yak {
             })
     }
 
+    #[must_use]
     pub fn is_stuck(&self) -> bool {
         self.base()
             .get_linear_velocity()
             .x
-            .approx_eq(&(-Level::SPEED as f32))
+            .approx_eq(&-Level::SPEED)
     }
 }

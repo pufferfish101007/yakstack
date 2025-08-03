@@ -18,7 +18,7 @@ pub struct Chunk {
 impl IStaticBody2D for Chunk {
     fn ready(&mut self) {
         if self.get_length() < 1 {
-            godot_error!("chunk must have length >= 1")
+            godot_error!("chunk must have length >= 1");
         }
     }
 }

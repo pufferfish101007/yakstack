@@ -107,7 +107,7 @@ impl INode2D for Level {
 }
 
 impl Level {
-    pub const SPEED: f64 = 300.0;
+    pub const SPEED: f32 = 300.0;
 
     fn spawn_yak(&mut self) {
         let mut yak = Yak::new_alloc();

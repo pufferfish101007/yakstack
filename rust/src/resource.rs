@@ -20,5 +20,5 @@ where
             );
             try_load(&format!("{}.svg", path.as_ref()))
         })
-        .expect(format!("couldn't find png or svg texture for {}", path.as_ref()).as_str())
+        .unwrap_or_else(|_| panic!("couldn't find png or svg texture for {}", path.as_ref()))
 }

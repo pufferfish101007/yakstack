@@ -15,6 +15,6 @@ impl ICamera2D for Camera {
     fn physics_process(&mut self, delta: f64) {
         let zoom = self.base().get_zoom();
         let new_zoom = zoom.lerp(Vector2::splat(self.target_zoom), delta as f32 * 3.0);
-        self.base_mut().set_zoom(new_zoom)
+        self.base_mut().set_zoom(new_zoom);
     }
 }

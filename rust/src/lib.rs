@@ -1,3 +1,6 @@
+#![warn(clippy::pedantic)]
+#![allow(clippy::cast_precision_loss, clippy::cast_possible_truncation)]
+
 use godot::prelude::*;
 
 pub mod camera;

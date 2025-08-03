@@ -20,7 +20,7 @@ pub struct Terrain {
 
 #[godot_api]
 impl INode2D for Terrain {
-    fn physics_process(&mut self, delta: f64) {
+    fn physics_process(&mut self, delta: f32) {
         for chunk in &mut self.chunks {
             let desired_position = chunk.bind_mut().desired_position;
             let pos = if let Some(p) = desired_position {
@@ -31,7 +31,7 @@ impl INode2D for Terrain {
             };
             chunk.set_position(
                 pos + Vector2 {
-                    x: -(Level::SPEED * delta) as f32,
+                    x: -Level::SPEED * delta,
                     y: 0.0,
                 },
             );
@@ -87,7 +87,7 @@ impl Terrain {
                 this.generate_terrain();
             });
             chunk.set_constant_linear_velocity(Vector2 {
-                x: -Level::SPEED as f32,
+                x: -Level::SPEED,
                 y: 0.0,
             });
         }
