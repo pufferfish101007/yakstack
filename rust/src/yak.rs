@@ -1,8 +1,10 @@
+use crate::level::Level;
 use crate::resource::load_texture;
+use godot::builtin::math::ApproxEq;
 use godot::classes::rigid_body_2d::CcdMode;
 use godot::classes::{
-    CollisionShape2D, ConvexPolygonShape2D, PhysicsMaterial, RectangleShape2D, RigidBody2D,
-    Shape2D, Sprite2D, Texture2D, VisibleOnScreenEnabler2D,
+    CollisionShape2D, ConvexPolygonShape2D, IRigidBody2D, PhysicsMaterial, RectangleShape2D,
+    RigidBody2D, Shape2D, Sprite2D, Texture2D, VisibleOnScreenEnabler2D,
 };
 use godot::prelude::*;
 
@@ -62,8 +64,22 @@ pub struct Yak {
 }
 
 #[godot_api]
+impl IRigidBody2D for Yak {
+    fn physics_process(&mut self, _delta: f32) {
+        if self.is_stuck() && self.base().get_linear_velocity().y.is_zero_approx() {
+            self.base_mut()
+                .set_linear_velocity(Vector2 { x: 0.0, y: -10.0 });
+        }
+    }
+}
+
+#[godot_api]
 impl Yak {
-    #[func]
+    #[signal]
+    pub fn screen_exited(yak: Gd<Yak>);
+}
+
+impl Yak {
     pub fn setup(&mut self, position: Vector2, id: u32) {
         self.base_mut().set_position(position);
         // if yaks can rotate, they'll start spiralling everywhere if they hit a corner - not fun
@@ -73,6 +89,8 @@ impl Yak {
         // try to stop falling yaks from sinking into the floor too much
         self.base_mut()
             .set_continuous_collision_detection_mode(CcdMode::CAST_SHAPE);
+        self.base_mut().set_contact_monitor(true);
+        self.base_mut().set_max_contacts_reported(32);
 
         let mut physics_material = PhysicsMaterial::new_gd();
         // yaks must be frictionless so that if a base yak stops but the yaks above it are unimpeded,
@@ -110,11 +128,6 @@ impl Yak {
         self.base_mut().add_child(&collision_shape);
     }
 
-    #[signal]
-    pub fn screen_exited(yak: Gd<Yak>);
-}
-
-impl Yak {
     pub fn set_costume(&mut self, costume: YakCostume) {
         self.sprite2d
             .clone()
@@ -128,5 +141,31 @@ impl Yak {
             .clone()
             .unwrap()
             .set_position(shape_offset);
+    }
+
+    /// All yaks are very supportive of whatever struggles you're going through
+    /// right now. You got this <3
+    ///
+    /// But this particular function determines if this yak is actively supporting other
+    /// yaks (physically).
+    pub fn is_supportive(&self) -> bool {
+        let my_position = self.base().get_position();
+        self.base()
+            .get_colliding_bodies()
+            .iter_shared()
+            .any(|friend| {
+                // remember that godot's y coordinates are upside down from what we'd expect!
+                friend.get_position().y < my_position.y
+                    // a yak could be higher up than this one, but not be supported by it,
+                    // so make sure that the x coordinates overlap too
+                    && f32::abs(friend.get_position().x - my_position.x) < 96.0
+            })
+    }
+
+    pub fn is_stuck(&self) -> bool {
+        self.base()
+            .get_linear_velocity()
+            .x
+            .approx_eq(&(-Level::SPEED as f32))
     }
 }

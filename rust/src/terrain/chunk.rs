@@ -50,8 +50,6 @@ impl Chunk {
 
         let mut physics_material = PhysicsMaterial::new_gd();
         physics_material.set_friction(0.0);
-        physics_material.set_absorbent(true);
-        physics_material.set_bounce(1.0);
         self.base_mut()
             .set_physics_material_override(&physics_material);
     }
