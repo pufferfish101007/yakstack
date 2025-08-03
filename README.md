@@ -11,9 +11,11 @@ Don't panic. Just Yak Stack.
 ### Prerequisites
 - [Godot](https://godotengine.org) v4.5.x (but should also work on 4.4.x)
 - A recent version (preferably nightly) of [rust](https://rust-lang.org) (install via [rustup](https://rustup.rs))
+- [Python 3](https://python.org)
+- [Inkscape](https://inkscape.org), added to PATH (optional but required for release builds)
 
 ### Running (debug)
-- Run `cargo +nightyl build -Zprofile-hint-mostly-unused` (or just `cargo build` if not nightly)  in the `rust` directory
+- Run `python3 build.py --debug`
 - `ctrl+f5` in godot
 
 ### Building

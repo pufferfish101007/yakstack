@@ -8,6 +8,7 @@
 
 [node name="Terrain" type="Terrain" parent="EndlessLevel"]
 auto_generate = true
+position = Vector2(-4, 0)
 
 [node name="Camera" type="Camera" parent="EndlessLevel"]
 position = Vector2(578, 323)
