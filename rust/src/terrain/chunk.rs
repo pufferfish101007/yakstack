@@ -1,3 +1,4 @@
+use crate::resource::load_texture;
 use godot::classes::{
     CollisionShape2D, IStaticBody2D, PhysicsMaterial, RectangleShape2D, Sprite2D, StaticBody2D,
     Texture2D, VisibleOnScreenNotifier2D,
@@ -68,14 +69,17 @@ impl Chunk {
         let length = self.get_length();
 
         let mut ground = Sprite2D::new_alloc();
-        ground.set_texture(&load::<Texture2D>("res://assets/tiles/green_square.svg"));
+        ground.set_texture(&load_texture::<_, Texture2D>(
+            "res://assets/tiles/green_square",
+        ));
         ground.set_scale(Vector2 {
             x: length as f32,
             y: Self::GROUND_TILE_HEIGHT,
         });
         ground.set_position(Vector2 {
             x: 0.5 * Self::TILE_SIZE * length as f32,
-            y: Self::GROUND_Y + Self::TILE_SIZE * Self::GROUND_TILE_HEIGHT * 0.5 - Self::TILE_SIZE * 0.5,
+            y: Self::GROUND_Y + Self::TILE_SIZE * Self::GROUND_TILE_HEIGHT * 0.5
+                - Self::TILE_SIZE * 0.5,
         });
         self.base_mut().add_child(&ground);
 
@@ -88,14 +92,17 @@ impl Chunk {
         collision_shape.set_shape(&shape);
         collision_shape.set_position(Vector2 {
             x: 0.5 * Self::TILE_SIZE * length as f32,
-            y: Self::GROUND_Y + Self::TILE_SIZE * Self::GROUND_TILE_HEIGHT * 0.5 - Self::TILE_SIZE * 0.5,
+            y: Self::GROUND_Y + Self::TILE_SIZE * Self::GROUND_TILE_HEIGHT * 0.5
+                - Self::TILE_SIZE * 0.5,
         });
         self.base_mut().add_child(&collision_shape);
 
         for x in 0..length {
             if randf() > 0.6 {
                 let mut sprite2d = Sprite2D::new_alloc();
-                sprite2d.set_texture(&load::<Texture2D>("res://assets/tiles/green_square.svg"));
+                sprite2d.set_texture(&load_texture::<_, Texture2D>(
+                    "res://assets/tiles/green_square",
+                ));
                 sprite2d.set_position(Vector2 {
                     x: (Self::TILE_SIZE * x as f32) + Self::TILE_SIZE * 0.5,
                     y: Self::GROUND_Y - Self::TILE_SIZE,

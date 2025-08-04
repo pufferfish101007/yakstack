@@ -5,9 +5,7 @@ import glob
 
 def main():
     parser = argparse.ArgumentParser(prog="Yak Stack build script")
-    parser.add_argument(
-        "-d", "--debug", action="store_true", help="debug build (default)"
-    )
+    parser.add_argument("-d", "--debug", action="store_true", help="debug build")
     parser.add_argument("-r", "--release", action="store_true", help="release build")
     parser.add_argument(
         "-i",
@@ -28,11 +26,15 @@ def main():
 
     if images:
         print("converting SVGs to PNGs")
-        for svg in glob.glob("assets/**/*.svg", recursive=True):
+        for svg in glob.glob("godot/assets/**/*.svg", recursive=True):
+            print(svg)
             subprocess.run(["inkscape", "--export-overwrite", "--export-type=png", svg])
 
     rust_toolchains = subprocess.run(
-        ["rustup", "toolchain", "list"], stdout=subprocess.PIPE, check=True, text=True
+        ["rustup", "toolchain", "list"],
+        stdout=subprocess.PIPE,
+        check=True,
+        text=True,
     ).stdout
     nightly = "nightly" in rust_toolchains
 
@@ -49,9 +51,14 @@ def main():
                     "--release",
                 ],
                 check=True,
+                cwd="rust",
             )
         else:
-            subprocess.run(["cargo", "build", "--release"], check=True)
+            subprocess.run(
+                ["cargo", "build", "--release"],
+                check=True,
+                cwd="rust",
+            )
         print("release mode does not build the full project yet - use godot to export")
     else:
         print("building in debug mode")
@@ -60,9 +67,14 @@ def main():
             subprocess.run(
                 ["cargo", "+nightly", "build", "-Zprofile-hint-mostly-unused"],
                 check=True,
+                cwd="rust",
             )
         else:
-            subprocess.run(["cargo", "build"], check=True)
+            subprocess.run(
+                ["cargo", "build"],
+                check=True,
+                cwd="rust",
+            )
         print("finished debug build - now run in godot")
 
     print("finished!")
